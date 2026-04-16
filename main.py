@@ -47,10 +47,17 @@ def gravatar_filter(email, size=100, default='retro', rating='g'):
 # CREATE DATABASE
 class Base(DeclarativeBase):
     pass
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-    "DATABASE_URL",
-    "sqlite:///posts.db"
-)
+
+
+
+import re
+
+db_url = os.environ.get("DATABASE_URL", "sqlite:///posts.db")
+# Render يعطي postgres:// لكن SQLAlchemy يحتاج postgresql://
+if db_url.startswith("postgres://"):
+    db_url = db_url.replace("postgres://", "postgresql://", 1)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 db = SQLAlchemy(model_class=Base)
 db.init_app(app)
 
