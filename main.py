@@ -46,7 +46,10 @@ gravatar = Gravatar(app,
 # CREATE DATABASE
 class Base(DeclarativeBase):
     pass
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DB_URI", "sqlite:///posts.db")
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
+    "DATABASE_URL",
+    "sqlite:///posts.db"
+)
 db = SQLAlchemy(model_class=Base)
 db.init_app(app)
 
@@ -105,7 +108,7 @@ def admin_only(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         # If id is not 1 then return abort with 403 error
-        if current_user.id != 1:
+        if not current_user.is_authenticated or current_user.id != 1:
             return abort(403)
         # Otherwise continue with the route function
         return f(*args, **kwargs)
@@ -224,6 +227,7 @@ def add_new_post():
 
 
 # Use a decorator so only an admin user can edit a post
+@admin_only
 @app.route("/edit-post/<int:post_id>", methods=["GET", "POST"])
 def edit_post(post_id):
     post = db.get_or_404(BlogPost, post_id)
@@ -264,9 +268,10 @@ def about():
 def contact():
     return render_template("contact.html", current_user=current_user)
 
-# Optional: You can include the email sending code from Day 60:
+# Optional: You can include the email sending code, but make sure to use environment variables to hide your email and password.
 # DON'T put your email and password here directly! The code will be visible when you upload to Github.
-# Use environment variables instead (Day 35)
+# Use environment variables instead and add those variables to your hosting platform (e.g. Heroku) as well.
+
 
 # MAIL_ADDRESS = os.environ.get("EMAIL_KEY")
 # MAIL_APP_PW = os.environ.get("PASSWORD_KEY")
@@ -287,6 +292,5 @@ def contact():
 #         connection.login(MAIL_ADDRESS, MAIL_APP_PW)
 #         connection.sendmail(MAIL_ADDRESS, MAIL_APP_PW, email_message)
 
-
 if __name__ == "__main__":
-    app.run(debug=True, port=5001)
+    app.run(debug=False)
