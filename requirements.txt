@@ -8,6 +8,6 @@ WTForms==3.0.1
 Flask-Bootstrap==3.3.7.1
 Flask-CKEditor==0.5.1
 gunicorn==21.2.0
-psycopg2-binary==2.9.9
+psycopg2-binary==2.9.10
 
 
