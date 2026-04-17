@@ -79,8 +79,11 @@ class Comment(db.Model):
     parent_post = relationship("BlogPost", back_populates="comments")
 
 with app.app_context():
-    db.create_all()
-
+    try:
+        db.create_all()
+        print("DB OK")
+    except Exception as e:
+        print("DB ERROR:", e)
 
 @app.route('/')
 def get_all_posts():
