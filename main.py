@@ -3,7 +3,6 @@ from functools import wraps
 from flask import Flask, abort, render_template, redirect, url_for, flash
 from flask_bootstrap import Bootstrap5
 from flask_ckeditor import CKEditor
-from flask_gravatar import Gravatar
 from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
@@ -82,12 +81,6 @@ class Comment(db.Model):
 with app.app_context():
     db.create_all()
 
-gravatar = Gravatar(
-    app,
-    size=100,
-    rating='g',
-    default='retro'
-)
 
 @app.route('/')
 def get_all_posts():
